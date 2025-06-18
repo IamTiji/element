@@ -195,6 +195,10 @@ public class DrawCalls {
         return convertToPixels(FontLoader.getFontWidth(text, FONT_SIZE));
     }
 
+    public static float textCenter(String text, int width) {
+        return (width - textWidth(text)) / 2;
+    }
+
     public static void forget(int id) {
         if (verticesStorage.remove(id) != null) updateVertices = true;
         if (textVerticesStorage.remove(id) != null) updateTextVertices = true;
