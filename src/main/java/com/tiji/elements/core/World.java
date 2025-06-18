@@ -15,8 +15,7 @@ public class World {
     private final BlockingQueue<Element> taskQueue;
     private long lastTickStartTime = 0;
     private boolean addingQueue = false;
-    private final ArrayList<Position> diffBuffer;
-    private final ArrayList<Position> diff;
+    private final ChangesBuffer changes;
 
     public World(int width, int height, ElementFactory initialElement) {
         this.width = width;
@@ -32,8 +31,7 @@ public class World {
             }
         }
         taskQueue = new ArrayBlockingQueue<>(width*height+1);
-        diffBuffer = new ArrayList<>();
-        diff = new ArrayList<>();
+        changes = new ChangesBuffer();
     }
 
     public void init() {
@@ -117,14 +115,11 @@ public class World {
                     }
                 }
                 if (shouldReschedule) {
-                    synchronized (diffBuffer) {
-                        diff.addAll(diffBuffer);
-                        diffBuffer.clear();
-                        long tickCalcTime = System.currentTimeMillis() - lastTickStartTime;
-                        Thread.sleep(Math.max(0, Game.TARGET_MSPT - tickCalcTime));
-                        tickCount++;
-                        scheduleTasks();
-                    }
+                    changes.swapBuffer();
+                    long tickCalcTime = System.currentTimeMillis() - lastTickStartTime;
+                    Thread.sleep(Math.max(0, Game.TARGET_MSPT - tickCalcTime));
+                    tickCount++;
+                    scheduleTasks();
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -137,16 +132,10 @@ public class World {
     }
 
     public Position[] pollDiff() {
-        synchronized (diffBuffer) {
-            Position[] returnValue = diff.toArray(new Position[0]);
-            diff.clear();
-            return returnValue;
-        }
+        return changes.pollChanges().toArray(new Position[0]);
     }
 
     public void addDiff(Position pos) {
-        synchronized (diffBuffer) {
-            diffBuffer.add(pos);
-        }
+        changes.addChange(pos);
     }
 }
