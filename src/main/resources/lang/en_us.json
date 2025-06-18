@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "translations": {
+    "ui.title": "Elements",
+    "element.air": "Air",
+    "element.water": "Water",
+    "element.sand": "Sand",
+    "element.stone": "Stone",
+    "element.mud": "Mud"
+  }
+}
