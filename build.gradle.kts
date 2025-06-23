@@ -42,3 +42,12 @@ dependencies {
     runtimeOnly("org.lwjgl", "lwjgl-openal", classifier = lwjglNatives)
     runtimeOnly("org.lwjgl", "lwjgl-opengl", classifier = lwjglNatives)
 }
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "com.tiji.elements.Game"
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(configurations.runtimeClasspath.get().filter { it.exists() }.map { zipTree(it) })
+    from(sourceSets.main.get().output)
+}
