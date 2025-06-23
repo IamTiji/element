@@ -23,8 +23,10 @@ public class Window {
 
         if (!glfwInit()) throw new IllegalStateException("GLFW initialization failed!");
         GLFW.glfwDefaultWindowHints();
-        GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE  , GLFW.GLFW_TRUE );
-        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
+        GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE  ,               GLFW.GLFW_TRUE );
+        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE,               GLFW.GLFW_FALSE);
+        GLFW.glfwWindowHint(GLFW.GLFW_TRANSPARENT_FRAMEBUFFER, GLFW.GLFW_TRUE );
+        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_DEBUG_CONTEXT   , GLFW.GLFW_TRUE );
 
         long monitor     = GLFW.glfwGetPrimaryMonitor();
         GLFWVidMode info = GLFW.glfwGetVideoMode(monitor);

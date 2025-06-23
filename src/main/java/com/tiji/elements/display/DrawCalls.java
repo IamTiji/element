@@ -5,8 +5,6 @@ import com.tiji.elements.core.Position;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL43;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -161,12 +159,12 @@ public class DrawCalls {
         float green = color.green() / 255f;
         float blue = color.blue() / 255f;
         float[] vertices = {
-                packedVertices[0][0], packedVertices[0][1], -(float) id, red, green, blue,
-                packedVertices[1][0], packedVertices[1][1], -(float) id, red, green, blue,
-                packedVertices[2][0], packedVertices[2][1], -(float) id, red, green, blue,
-                packedVertices[0][0], packedVertices[0][1], -(float) id, red, green, blue,
-                packedVertices[2][0], packedVertices[2][1], -(float) id, red, green, blue,
-                packedVertices[3][0], packedVertices[3][1], -(float) id, red, green, blue,
+                packedVertices[0][0], packedVertices[0][1], (float) id, red, green, blue,
+                packedVertices[1][0], packedVertices[1][1], (float) id, red, green, blue,
+                packedVertices[2][0], packedVertices[2][1], (float) id, red, green, blue,
+                packedVertices[0][0], packedVertices[0][1], (float) id, red, green, blue,
+                packedVertices[2][0], packedVertices[2][1], (float) id, red, green, blue,
+                packedVertices[3][0], packedVertices[3][1], (float) id, red, green, blue,
         };
         verticesStorage.put(id, vertices);
 
@@ -179,7 +177,7 @@ public class DrawCalls {
         int id = ++lastId;
 
         float[] normalizedPosition = getPos(pos);
-        ArrayList<Float> vertices = FontLoader.genTextVertices(text, normalizedPosition[0], normalizedPosition[1], color, FONT_SIZE, -(float) id);
+        ArrayList<Float> vertices = FontLoader.genTextVertices(text, normalizedPosition[0], normalizedPosition[1], color, FONT_SIZE, (float) id);
         float[] verticesArray = new float[vertices.size()];
         for (int i = 0; i < vertices.size(); i++) {
             verticesArray[i] = vertices.get(i);

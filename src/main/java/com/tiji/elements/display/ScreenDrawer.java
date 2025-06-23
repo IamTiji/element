@@ -22,10 +22,10 @@ public class ScreenDrawer {
 
     float[] quadVertices = {
             // Position              Tex Coord
-            -1.0f, -1.0f, -10000f,   0f,  0f,
-             1.0f, -1.0f, -10000f,   1f,  0f,
-             1.0f,  1.0f, -10000f,   1f,  1f,
-            -1.0f,  1.0f, -10000f,   0f,  1f
+            -1.0f, -1.0f, 0f,   0f,  0f,
+             1.0f, -1.0f, 0f,   1f,  0f,
+             1.0f,  1.0f, 0f,   1f,  1f,
+            -1.0f,  1.0f, 0f,   0f,  1f
     };
     int[] quadIndices = {
             0, 1, 2,
@@ -40,10 +40,10 @@ public class ScreenDrawer {
 
     public static final Object uiConstructLock = new Object();
     public static final float[] projectionMatrix = {
-            1.0f, 0.0f, 0.0f  , -0.0f,
-            0.0f, 1.0f, 0.0f  , -0.0f,
-            0.0f, 0.0f, -1e-5f, 0.0f,
-            0.0f, 0.0f, 0.0f  , 1.0f
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1e-4f, 0,
+            0, 0, 0, 1
     };
     public static final FloatBuffer projectionMatrixBuffer = BufferUtils.createFloatBuffer(16);
     public static final int bindingPoint = 0;
@@ -53,7 +53,7 @@ public class ScreenDrawer {
 
         int ubo = GL43.glGenBuffers();
         GL43.glBindBuffer(GL43.GL_UNIFORM_BUFFER, ubo);
-        GL43.glBufferData(GL43.GL_UNIFORM_BUFFER, 64, GL43.GL_STATIC_DRAW);
+        GL43.glBufferData(GL43.GL_UNIFORM_BUFFER, Float.BYTES * 16, GL43.GL_STATIC_DRAW);
 
         GL43.glBufferSubData(GL43.GL_UNIFORM_BUFFER, 0, projectionMatrixBuffer);
 
