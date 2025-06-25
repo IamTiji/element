@@ -78,4 +78,10 @@ abstract public class Element {
     public abstract void restTick();
     public abstract String getDebugInfo();
     public abstract String getTranslationKey();
+    public Color getGlowColor() {
+        return new Color(0, 0, 0);
+    }
+    public int getGlowIntensity() {
+        return 0;
+    }
 }
