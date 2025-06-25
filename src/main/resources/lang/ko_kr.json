@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "translations": {
+    "ui.title": "Elements",
+    "element.air": "공기",
+    "element.water": "물",
+    "element.sand": "모래",
+    "element.stone": "돌",
+    "element.mud": "진흙",
+    "element.fire": "불",
+    "element.wood": "나무"
+  }
+}
