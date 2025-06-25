@@ -93,9 +93,11 @@ public class DrawCalls {
         GL43.glDrawArrays(GL43.GL_TRIANGLES, 0, normalVertices);
 
         GL43.glUseProgram(FontLoader.shaderProgram);
+        GL43.glUniform1i(GL43.glGetUniformLocation(FontLoader.shaderProgram, "texture_"), 0);
         GL43.glEnable(GL43.GL_BLEND);
         GL43.glBlendFunc(GL43.GL_SRC_ALPHA, GL43.GL_ONE_MINUS_SRC_ALPHA);
         GL43.glBindVertexArray(vao_text);
+        GL43.glActiveTexture(GL43.GL_TEXTURE0);
         GL43.glBindTexture(GL43.GL_TEXTURE_2D, FontLoader.fontAtlasPointer);
         GL43.glDrawArrays(GL43.GL_TRIANGLES, 0, textVertices);
         GL43.glDisable(GL43.GL_BLEND);
