@@ -7,7 +7,7 @@ import com.tiji.elements.core.Untickable;
 
 public class Air extends Element implements Untickable {
     public Air(Position position) {
-        super(position, -1);
+        super(position, Integer.MIN_VALUE);
     }
 
     @Override

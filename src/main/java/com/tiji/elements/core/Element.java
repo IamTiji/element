@@ -14,11 +14,11 @@ abstract public class Element {
     protected void swapWith(Position pos) {
         Game.world.swapElement(this.position, pos);
     }
-    protected Element getElementAt(Position pos) {
+    protected final Element getElementAt(Position pos) {
         if (Game.world.isOutOfBounds(pos)) return null;
         return Game.world.getElement(pos);
     }
-    public void setPosition(Position position) {
+    public final void setPosition(Position position) {
         this.position = position;
     }
     public Element(Position position, int swapPriority) {
@@ -27,13 +27,13 @@ abstract public class Element {
         this.swapPriority = swapPriority;
         if (Game.world != null) this.lastNeighborUpdateTime = Game.world.getTickCount();
     }
-    public Position getPosition() {
+    public final Position getPosition() {
         return position;
     }
-    public int getTemperature() {
+    public final int getTemperature() {
         return temperature;
     }
-    public void setTemperature(int temperature) {
+    public final void setTemperature(int temperature) {
         this.temperature = temperature;
     }
     protected void updateNeighbors(int recursiveDepth, ArrayList<Position> updatedElements) {

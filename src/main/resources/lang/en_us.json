@@ -6,6 +6,7 @@
     "element.water": "Water",
     "element.sand": "Sand",
     "element.stone": "Stone",
-    "element.mud": "Mud"
+    "element.mud": "Mud",
+    "element.fire": "Fire"
   }
 }

@@ -17,7 +17,8 @@ public class Game {
             Water::new,
             Sand::new,
             Stone::new,
-            Mud::new
+            Mud::new,
+            Fire::new
     };
     public static int DrawScale;
     public static final boolean isDevelopment = true;
