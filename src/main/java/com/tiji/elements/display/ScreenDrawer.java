@@ -1,6 +1,7 @@
 package com.tiji.elements.display;
 
 import com.tiji.elements.Game;
+import com.tiji.elements.core.Chunk;
 import com.tiji.elements.core.Color;
 import com.tiji.elements.core.Element;
 import com.tiji.elements.core.Position;
@@ -35,14 +36,14 @@ public class ScreenDrawer {
     };
     int vao, vbo, ebo, fbo;
     int glow1PassTexture, glow0PassTexture;
-    int elementIdMap;
+    int debugTexture;
 
     ByteBuffer worldTexture;
     ByteBuffer glowWorldTexture;
-    ShortBuffer elementIdMapBuffer;
+    ByteBuffer debugDataBuffer;
     int texturePointer;
 
-    int shaderProgram, glowShaderProgram;
+    int shaderProgram, glowShaderProgram, debugShaderProgram;
 
     public static final Object uiConstructLock = new Object();
     public static final float[] projectionMatrix = {
@@ -117,10 +118,11 @@ public class ScreenDrawer {
 
         shaderProgram = makeShaderProgram("/shader/element.vert", "/shader/element.frag");
         glowShaderProgram = makeShaderProgram("/shader/glow.vert", "/shader/glow.frag");
+        debugShaderProgram = makeShaderProgram("/shader/debug.vert", "/shader/debug.frag");
 
         worldTexture = BufferUtils.createByteBuffer(Game.WIDTH * Game.HEIGHT * 4);
         glowWorldTexture = BufferUtils.createByteBuffer(Game.WIDTH * Game.HEIGHT * 4);
-        elementIdMapBuffer = BufferUtils.createShortBuffer(Game.WIDTH * Game.HEIGHT);
+        debugDataBuffer = BufferUtils.createByteBuffer(Game.WIDTH * Game.HEIGHT * 4);
 
         for (int y = 0; y < Game.HEIGHT; y++) {
             for (int x = 0; x < Game.WIDTH; x++) {
@@ -137,13 +139,15 @@ public class ScreenDrawer {
                 glowWorldTexture.put((byte) glow.blue());
                 glowWorldTexture.put((byte) element.getGlowIntensity());
 
-                short id = (short) element.getClass().hashCode();
-                elementIdMapBuffer.put(id);
+                debugDataBuffer.put((byte) 0);
+                debugDataBuffer.put((byte) (Game.world.getDebugChunk(x, y).state.equals(Chunk.ChunkState.UPDATED) ? 255 : 0));
+                debugDataBuffer.put((byte) (Game.world.getDebugChunk(x, y).state.equals(Chunk.ChunkState.RUNNING) ? 255 : 0));
+                debugDataBuffer.put((byte) 127);
             }
         }
         worldTexture.flip();
         glowWorldTexture.flip();
-        elementIdMapBuffer.flip();
+        debugDataBuffer.flip();
 
         texturePointer = GL43.glGenTextures();
         GL43.glBindTexture(GL43.GL_TEXTURE_2D, texturePointer);
@@ -200,9 +204,9 @@ public class ScreenDrawer {
 
         GL43.glBindFramebuffer(GL43.GL_FRAMEBUFFER, 0);
 
-        elementIdMap = GL43.glGenTextures();
-        GL43.glBindTexture(GL43.GL_TEXTURE_2D, elementIdMap);
-        GL43.glTexImage2D(GL43.GL_TEXTURE_2D, 0, GL43.GL_R16I, Game.WIDTH, Game.HEIGHT, 0, GL43.GL_RED_INTEGER, GL43.GL_SHORT, elementIdMapBuffer);
+        debugTexture = GL43.glGenTextures();
+        GL43.glBindTexture(GL43.GL_TEXTURE_2D, debugTexture);
+        GL43.glTexImage2D(GL43.GL_TEXTURE_2D, 0, GL43.GL_RGBA, Game.WIDTH, Game.HEIGHT, 0, GL43.GL_RGBA, GL43.GL_SHORT, debugDataBuffer);
         GL43.glTexParameteri(GL43.GL_TEXTURE_2D, GL43.GL_TEXTURE_MIN_FILTER, GL43.GL_NEAREST);
         GL43.glTexParameteri(GL43.GL_TEXTURE_2D, GL43.GL_TEXTURE_MAG_FILTER, GL43.GL_NEAREST);
 
@@ -219,7 +223,6 @@ public class ScreenDrawer {
         Position[] diff = Game.world.pollDiff();
         worldTexture.limit(worldTexture.capacity());
         glowWorldTexture.limit(glowWorldTexture.capacity());
-        elementIdMapBuffer.limit(elementIdMapBuffer.capacity());
         for (Position position : diff) {
             Element element = Game.world.getElement(position);
             int index = (position.y() * Game.WIDTH + position.x()) * 4;
@@ -235,14 +238,11 @@ public class ScreenDrawer {
             glowWorldTexture.put(index + 1, (byte) glow.green());
             glowWorldTexture.put(index + 2, (byte) glow.blue());
             glowWorldTexture.put(index + 3, (byte) element.getGlowIntensity());
-
-            short id = (short) element.getClass().hashCode();
-            elementIdMapBuffer.put(index / 4, id);
         }
         if (diff.length > 0) {
             worldTexture.flip();
             glowWorldTexture.flip();
-            elementIdMapBuffer.flip();
+            debugDataBuffer.flip();
 
             GL43.glBindTexture(GL43.GL_TEXTURE_2D, texturePointer);
             GL43.glTexSubImage2D(GL43.GL_TEXTURE_2D, 0, 0, 0, Game.WIDTH, Game.HEIGHT, GL43.GL_RGBA, GL43.GL_UNSIGNED_BYTE, worldTexture);
@@ -250,9 +250,21 @@ public class ScreenDrawer {
             GL43.glBindTexture(GL43.GL_TEXTURE_2D, glow0PassTexture);
             GL43.glTexSubImage2D(GL43.GL_TEXTURE_2D, 0, 0, 0, Game.WIDTH, Game.HEIGHT, GL43.GL_RGBA, GL43.GL_UNSIGNED_BYTE, glowWorldTexture);
 
-            GL43.glBindTexture(GL43.GL_TEXTURE_2D, elementIdMap);
-            GL43.glTexSubImage2D(GL43.GL_TEXTURE_2D, 0, 0, 0, Game.WIDTH, Game.HEIGHT, GL43.GL_RED_INTEGER, GL43.GL_SHORT, elementIdMapBuffer);
         }
+        debugDataBuffer.limit(debugDataBuffer.capacity());
+        for (int x = 0; x < Game.WIDTH; x++) {
+            for (int y = 0; y < Game.HEIGHT; y++) {
+                int index = (y * Game.WIDTH + x) * 4;
+                debugDataBuffer.put(index    , (byte) 0);
+                debugDataBuffer.put(index + 1, (byte) (Game.world.getDebugChunk(x, y).state.equals(Chunk.ChunkState.UPDATED) ? 255 : 0));
+                debugDataBuffer.put(index + 2, (byte) (Game.world.getDebugChunk(x, y).state.equals(Chunk.ChunkState.RUNNING) ? 255 : 0));
+                debugDataBuffer.put(index + 3, (byte) 70);
+            }
+        }
+        GL43.glBindTexture(GL43.GL_TEXTURE_2D, debugTexture);
+        GL43.glTexSubImage2D(GL43.GL_TEXTURE_2D, 0, 0, 0, Game.WIDTH, Game.HEIGHT, GL43.GL_RGBA, GL43.GL_UNSIGNED_BYTE, debugDataBuffer);
+
+        GL43.glUniform1i(GL43.glGetUniformLocation(shaderProgram, "id"), 0);
 
         GL43.glActiveTexture(GL43.GL_TEXTURE0);
         GL43.glBindTexture(GL43.GL_TEXTURE_2D, texturePointer);
@@ -263,10 +275,7 @@ public class ScreenDrawer {
 
         GL43.glUseProgram(glowShaderProgram);
 
-        GL43.glUniform1i(GL43.glGetUniformLocation(glowShaderProgram, "id"), 0);
-        GL43.glUniform1i(GL43.glGetUniformLocation(glowShaderProgram, "texture_"), 1);
-        GL43.glActiveTexture(GL43.GL_TEXTURE0);
-        GL43.glBindTexture(GL43.GL_TEXTURE_2D, elementIdMap);
+        GL43.glUniform1i(GL43.glGetUniformLocation(glowShaderProgram, "texture_"), 0);
 
         GL43.glUniform1i(GL43.glGetUniformLocation(glowShaderProgram, "blurDir"), 0);
 
@@ -274,7 +283,7 @@ public class ScreenDrawer {
         GL43.glDrawBuffer(GL43.GL_COLOR_ATTACHMENT0);
         GL43.glClear(GL43.GL_COLOR_BUFFER_BIT);
 
-        GL43.glActiveTexture(GL43.GL_TEXTURE1);
+        GL43.glActiveTexture(GL43.GL_TEXTURE0);
         GL43.glBindTexture(GL43.GL_TEXTURE_2D, glow0PassTexture);
 
         GL43.glBindVertexArray(vao);
@@ -287,9 +296,21 @@ public class ScreenDrawer {
 
         GL43.glUniform1i(GL43.glGetUniformLocation(glowShaderProgram, "blurDir"), 1);
 
-        GL43.glActiveTexture(GL43.GL_TEXTURE1);
+        GL43.glActiveTexture(GL43.GL_TEXTURE0);
         GL43.glBindTexture(GL43.GL_TEXTURE_2D, glow1PassTexture);
 
+        GL43.glDrawElements(GL43.GL_TRIANGLES, quadIndices.length, GL43.GL_UNSIGNED_INT, 0);
+
+
+        GL43.glUseProgram(debugShaderProgram);
+        GL43.glUniform1i(GL43.glGetUniformLocation(debugShaderProgram, "texture_"), 0);
+
+        GL43.glBlendFunc(GL43.GL_SRC_ALPHA, GL43.GL_ONE);
+
+        GL43.glActiveTexture(GL43.GL_TEXTURE0);
+        GL43.glBindTexture(GL43.GL_TEXTURE_2D, debugTexture);
+
+        GL43.glBindVertexArray(vao);
         GL43.glDrawElements(GL43.GL_TRIANGLES, quadIndices.length, GL43.GL_UNSIGNED_INT, 0);
 
         GL43.glDisable(GL43.GL_BLEND);
