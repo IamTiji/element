@@ -4,18 +4,23 @@ import com.tiji.elements.Game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class World {
     private final Element[][] world;
+    private final Chunk[][] chunks;
     private final int width;
     private final int height;
     private int tickCount = 0;
-    private final BlockingQueue<Element> taskQueue;
+    private final BlockingQueue<Chunk> taskQueue;
     private long lastTickStartTime = 0;
     private boolean addingQueue = false;
     private final ChangesBuffer changes;
+    private final int chunkX;
+    public final Chunk[][] chunksDebug;
+    private final int chunkY;
 
     public World(int width, int height, ElementFactory initialElement) {
         this.width = width;
@@ -30,7 +35,19 @@ public class World {
                 }
             }
         }
-        taskQueue = new ArrayBlockingQueue<>(width*height+1);
+        chunkX = this.width / Chunk.CHUNK_SIZE;
+        chunkY = this.height / Chunk.CHUNK_SIZE;
+        this.chunks = new Chunk[chunkX][chunkY];
+        for (int x = 0; x < chunkX; x++) {
+            for (int y = 0; y < chunkY; y++) {
+                chunks[x][y] = new Chunk(x, y);
+            }
+        }
+        this.chunksDebug = new Chunk[chunkX][chunkY];
+        for (int x = 0; x < chunkX; x++) {
+            System.arraycopy(chunks[x], 0, chunksDebug[x], 0, chunkY);
+        }
+        taskQueue = new ArrayBlockingQueue<>(chunkY*chunkX);
         changes = new ChangesBuffer();
     }
 
@@ -68,7 +85,6 @@ public class World {
         return world[pos.x()][pos.y()];
     }
 
-    // Important! This method expects element position to be init
     public void setElement(Position pos, Element element) {
         world[pos.x()][pos.y()] = element;
     }
@@ -79,15 +95,13 @@ public class World {
 
     public void scheduleTasks() {
         lastTickStartTime = System.currentTimeMillis();
-        ArrayList<Element> items = new ArrayList<>();
-        for (int x = 0; x < width; x++) {
-            items.addAll(Arrays.asList(world[x]).subList(0, height));
-        }
-        for (int i = 0; i < items.size(); i++) {
-            int nextIndex = (int) Math.floor(Math.random() * items.size());
-            Element temp = items.get(i);
-            items.set(i, items.get(nextIndex));
-            items.set(nextIndex, temp);
+        ArrayList<Chunk> items = new ArrayList<>();
+        for (Chunk[] chunkRow : chunks) {
+            for (Chunk chunk : chunkRow) {
+                if (chunk.shouldTick()) {
+                    items.add(chunk);
+                }
+            }
         }
         taskQueue.addAll(items);
         addingQueue = false;
@@ -96,11 +110,19 @@ public class World {
     private void threadWorker() {
         for (;;) {
             try {
-                Element task = taskQueue.take();
+                Chunk task = taskQueue.take();
+                ArrayList<Element> taskUnpacked = new ArrayList<>(Chunk.CHUNK_SIZE * Chunk.CHUNK_SIZE);
 
-                if (!(task instanceof Untickable)) {
-                    task.tick();
-                    task.lastTickTime = getTickCount();
+                for (int x = task.getX(); x < task.getX() + Chunk.CHUNK_SIZE; x++) {
+                    for (int y = task.getY(); y < task.getY() + Chunk.CHUNK_SIZE; y++) {
+                        if (!(world[x][y] instanceof Untickable)) {
+                            taskUnpacked.add(world[x][y]);
+                        };
+                    }
+                }
+                Collections.shuffle(taskUnpacked);
+                for (Element element : taskUnpacked) {
+                    element.tick();
                 }
 
                 boolean shouldReschedule;
@@ -108,17 +130,48 @@ public class World {
                     shouldReschedule = taskQueue.isEmpty() && !addingQueue;
                     if (shouldReschedule) {
                         addingQueue = true;
+                        reschedule();
                     }
-                }
-                if (shouldReschedule) {
-                    changes.swapBuffer();
-                    long tickCalcTime = System.currentTimeMillis() - lastTickStartTime;
-                    Thread.sleep(Math.max(0, Game.TARGET_MSPT - tickCalcTime));
-                    tickCount++;
-                    scheduleTasks();
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private void reschedule() throws InterruptedException {
+        changes.swapBuffer();
+        long tickCalcTime = System.currentTimeMillis() - lastTickStartTime;
+        if (Game.TARGET_MSPT*2 < tickCalcTime) System.err.printf("Tick took too long! %d ms, target: %d ms%n", tickCalcTime, Game.TARGET_MSPT);
+        Thread.sleep(Math.max(0, Game.TARGET_MSPT - tickCalcTime));
+        tickCount++;
+
+        for (int x = 0; x < chunkX; x++) {
+            for (int y = 0; y < chunkY; y++) {
+                if (chunks[x][y].shouldTick()) continue;
+                boolean left =   x > 0          && chunks[x - 1][y].state.equals(Chunk.ChunkState.RUNNING);
+                boolean right =  x < chunkX - 1 && chunks[x + 1][y].state.equals(Chunk.ChunkState.RUNNING);
+                boolean top =    y > 0          && chunks[x][y - 1].state.equals(Chunk.ChunkState.RUNNING);
+                boolean bottom = y < chunkY - 1 && chunks[x][y + 1].state.equals(Chunk.ChunkState.RUNNING);
+                boolean neighborUpdate = left || right || top || bottom;
+
+                if (neighborUpdate) {
+                    chunks[x][y].updateState(Chunk.ChunkState.UPDATED);
+                }
+            }
+        }
+        for (int x = 0; x < chunkX; x++) {
+            for (int y = 0; y < chunkY; y++) {
+                chunksDebug[x][y].updateState(chunks[x][y].state);
+            }
+        }
+        scheduleTasks();
+        if (taskQueue.isEmpty()) {
+            taskQueue.add(chunks[0][0]);
+        }
+        for (Chunk[] chunkRow : chunks) {
+            for (Chunk chunk : chunkRow) {
+                chunk.updateState(Chunk.ChunkState.IDLE);
             }
         }
     }
@@ -133,5 +186,17 @@ public class World {
 
     public void addDiff(Position pos) {
         changes.addChange(pos);
+    }
+
+    public void updateChunk(int x, int y) {
+        if (x < 0 || x >= width || y < 0 || y >= height) return;
+        chunks[x / Chunk.CHUNK_SIZE][y / Chunk.CHUNK_SIZE].updateState(Chunk.ChunkState.RUNNING);
+    }
+
+    public Chunk getChunkIn(int x, int y) {
+        return chunks[x / Chunk.CHUNK_SIZE][y / Chunk.CHUNK_SIZE];
+    }
+    public Chunk getDebugChunk(int x, int y) {
+        return chunksDebug[x / Chunk.CHUNK_SIZE][y / Chunk.CHUNK_SIZE];
     }
 }

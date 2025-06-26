@@ -12,6 +12,8 @@ abstract public class Element {
     private final int swapPriority;
 
     protected void swapWith(Position pos) {
+        Game.world.updateChunk(this.position.x(), this.position.y());
+        Game.world.updateChunk(pos.x(), pos.y());
         Game.world.swapElement(this.position, pos);
     }
     protected final Element getElementAt(Position pos) {
@@ -71,6 +73,7 @@ abstract public class Element {
     public void convertTo(ElementFactory element) {
         Game.world.setElement(getPosition(), element.call(getPosition()));
         Game.world.addDiff(this.position);
+        Game.world.updateChunk(this.position.x(), this.position.y());
     }
     public abstract void tick();
     public abstract Color displayedColor();

@@ -20,6 +20,7 @@ public class MouseEventHandler {
                 if (!Game.world.isOutOfBounds(newPosition)) {
                     Game.world.setElement(newPosition, Game.paintElement.call(newPosition));
                     Game.world.addDiff(newPosition);
+                    Game.world.updateChunk(newPosition.x(), newPosition.y());
                 }
             }
         }
