@@ -21,14 +21,4 @@ public abstract class ImmovableSolids extends Element {
     public Color displayedColor() {
         return color;
     }
-
-    @Override
-    public boolean canRest() {
-        return false;
-    }
-
-    @Override
-    public void restTick() {
-
-    }
 }

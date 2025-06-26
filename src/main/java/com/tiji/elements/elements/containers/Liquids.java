@@ -63,14 +63,4 @@ public abstract class Liquids extends Element {
     public Color displayedColor() {
         return color;
     }
-
-    @Override
-    public boolean canRest() {
-        return lastTickTime - lastNeighborUpdateTime > 10;
-    }
-
-    @Override
-    public void restTick() {
-
-    }
 }

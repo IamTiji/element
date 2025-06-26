@@ -21,16 +21,6 @@ public class Air extends Element implements Untickable {
     }
 
     @Override
-    public boolean canRest() {
-        return false;
-    }
-
-    @Override
-    public void restTick() {
-
-    }
-
-    @Override
     public String getDebugInfo() {
         return "Air";
     }

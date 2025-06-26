@@ -74,8 +74,6 @@ abstract public class Element {
     }
     public abstract void tick();
     public abstract Color displayedColor();
-    public abstract boolean canRest();
-    public abstract void restTick();
     public abstract String getDebugInfo();
     public abstract String getTranslationKey();
     public Color getGlowColor() {

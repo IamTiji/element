@@ -99,11 +99,7 @@ public class World {
                 Element task = taskQueue.take();
 
                 if (!(task instanceof Untickable)) {
-                    if (false) { //task.canRest()) {
-                        task.restTick();
-                    } else {
-                        task.tick();
-                    }
+                    task.tick();
                     task.lastTickTime = getTickCount();
                 }
 

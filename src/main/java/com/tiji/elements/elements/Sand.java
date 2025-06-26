@@ -55,15 +55,6 @@ public class Sand extends MovableSolids {
     }
 
     @Override
-    public boolean canRest() {
-        return lastTickTime - lastNeighborUpdateTime > 10;
-    }
-
-    @Override
-    public void restTick() {
-    }
-
-    @Override
     public String getDebugInfo() {
         return String.format("Sand");
     }
