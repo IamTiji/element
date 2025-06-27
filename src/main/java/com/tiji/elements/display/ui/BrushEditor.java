@@ -17,7 +17,6 @@ public class BrushEditor implements AbstractUI {
     private final int screenHeight;
 
     private final ArrayList<Integer> screenElements = new ArrayList<>();
-    private final ArrayList<Integer> hoverElements = new ArrayList<>();
 
     private static final ArrayList<BrushElement> cachedBrushes = new ArrayList<>();
 
@@ -67,20 +66,16 @@ public class BrushEditor implements AbstractUI {
     @Override
     public void render(int mouseX, int mouseY, int screenWidth, int screenHeight) {
         synchronized (ScreenDrawer.uiConstructLock) {
-            for (int id : hoverElements) {
-                DrawCalls.forget(id);
-            }
-            hoverElements.clear();
+            DrawCalls.popTemporaryDrawing();
+            DrawCalls.startTemporaryDrawing();
 
             BrushElement hoveredBrush = getHoveredBrush(mouseX, mouseY, screenWidth, screenHeight);
             if (hoveredBrush != null) {
                 int boxLength = (int) DrawCalls.textWidth(Game.translationHandler.translate(hoveredBrush.name));
-                for (int id : drawBox(mouseX, mouseY + 16, boxLength + 20, 28)) {
-                    hoverElements.add(id);
-                }
-                hoverElements.add(DrawCalls.text(new Position(mouseX + 10, mouseY + 20),
+                drawBox(mouseX, mouseY + 16, boxLength + 20, 28);
+                DrawCalls.text(new Position(mouseX + 10, mouseY + 20),
                         Game.translationHandler.translate(hoveredBrush.name),
-                        new Color(255, 255, 255)));
+                        new Color(255, 255, 255));
             }
         }
     }
@@ -130,8 +125,6 @@ public class BrushEditor implements AbstractUI {
         for (int screenElement : screenElements) {
             DrawCalls.forget(screenElement);
         }
-        for (int hoverElement : hoverElements) {
-            DrawCalls.forget(hoverElement);
-        }
+        DrawCalls.popTemporaryDrawing();
     }
 }

@@ -16,10 +16,15 @@ public class DrawCalls {
     private static final HashMap<Integer, float[]> verticesStorage = new HashMap<>();
     private static final HashMap<Integer, float[]> textVerticesStorage = new HashMap<>();
 
+    private static final ArrayList<Integer> temporaryVertices = new ArrayList<>();
+
+    private static boolean isDrawingTemporary = false;
+
     private static int normalVertices = 0;
     private static int textVertices = 0;
 
     private static int lastId = 0;
+    private static int temporaryIdStart = -1;
 
     private static int vbo_normal;
     private static int vbo_text;
@@ -169,6 +174,7 @@ public class DrawCalls {
                 packedVertices[3][0], packedVertices[3][1], (float) id, red, green, blue,
         };
         verticesStorage.put(id, vertices);
+        if (isDrawingTemporary) temporaryVertices.add(id);
 
         updateVertices = true;
 
@@ -185,6 +191,7 @@ public class DrawCalls {
             verticesArray[i] = vertices.get(i);
         }
         textVerticesStorage.put(id, verticesArray);
+        if (isDrawingTemporary) temporaryVertices.add(id);
 
         updateTextVertices = true;
 
@@ -208,5 +215,20 @@ public class DrawCalls {
         if (normalVertices == 0 && textVertices == 0) {
             lastId = 0;
         }
+    }
+
+    public static void startTemporaryDrawing() {
+        isDrawingTemporary = true;
+        temporaryIdStart = lastId;
+    }
+
+    public static void popTemporaryDrawing() {
+        if (!isDrawingTemporary) return;
+        for (int id : temporaryVertices) forget(id);
+        temporaryVertices.clear();
+        isDrawingTemporary = false;
+        updateTextVertices = true;
+        updateVertices = true;
+        lastId = temporaryIdStart;
     }
 }
