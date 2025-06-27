@@ -31,14 +31,9 @@ public class Button extends Widget {
         this(text, pos, (int) DrawCalls.textWidth(text));
     }
 
-    protected boolean isMouseInBounds(Position mousePos) {
-        return mousePos.x() >= getPos().x() && mousePos.x() <= getPos().x() + width &&
-                mousePos.y() >= getPos().y() && mousePos.y() <= getPos().y() + BUTTON_HEIGHT;
-    }
-
     @Override
     public void draw(Position mousePos) {
-        if (isMouseInBounds(mousePos) != isHovered) {
+        if (isPointInside(mousePos, width, BUTTON_HEIGHT) != isHovered) {
             DrawCalls.forget(elements[0]);
             isHovered = !isHovered;
             elements[0] = DrawCalls.rectangle(getPos(), width+HORIZ_PADDING*2, BUTTON_HEIGHT, isHovered ? HOVER_COLOR : DEFAULT_COLOR);

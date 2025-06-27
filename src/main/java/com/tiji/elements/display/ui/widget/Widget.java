@@ -25,9 +25,13 @@ public abstract class Widget {
         }
     }
 
+    public final boolean isPointInside(Position pos, int width, int height) {
+        return pos.x() >= this.pos.x() && pos.x() < this.pos.x() + width &&
+               pos.y() >= this.pos.y() && pos.y() < this.pos.y() + height;
+    }
+
     public abstract void draw(Position mousePos);
     public abstract void remove();
-    public void mouseMove(Position pos) {}
     public void mouseClick(Position pos) {}
     public void mouseRelease(Position pos) {}
 }
