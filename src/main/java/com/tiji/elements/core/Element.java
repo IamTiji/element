@@ -11,6 +11,10 @@ abstract public class Element {
     public long lastNeighborUpdateTime;
     private final int swapPriority;
 
+    public final void reportUpdateToChunk() {
+        Game.world.updateChunk(this.position.x(), this.position.y());
+    }
+
     protected void swapWith(Position pos) {
         Game.world.updateChunk(this.position.x(), this.position.y());
         Game.world.updateChunk(pos.x(), pos.y());

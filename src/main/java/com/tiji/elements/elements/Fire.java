@@ -30,6 +30,7 @@ public class Fire extends Gas {
         }
         if (!isBurning) super.tick();
         else {
+            reportUpdateToChunk();
             if (Math.random() < neighbor.naturalExtinguishChance()) {
                 convertTo(Air::new);
             } else if (Math.random() < neighbor.destroyChance()) {
