@@ -101,6 +101,8 @@ public class BrushEditor implements AbstractUI {
 
     @Override
     public void render(int mouseX, int mouseY, int screenWidth, int screenHeight) {
+        DrawCalls.popTemporaryDrawing();
+        DrawCalls.startTemporaryDrawing();
         widgets.forEach(widget -> widget.draw(new Position(mouseX, mouseY)));
     }
 

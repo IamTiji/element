@@ -5,8 +5,6 @@ import com.tiji.elements.core.Position;
 import com.tiji.elements.display.DrawCalls;
 
 public abstract class HoverText extends Widget {
-    boolean didShowHoverText = false;
-
     public HoverText(Position pos) {
         super(pos);
     }
@@ -16,14 +14,7 @@ public abstract class HoverText extends Widget {
 
     @Override
     public void draw(Position pos) {
-        if (didShowHoverText) {
-            DrawCalls.popTemporaryDrawing();
-            didShowHoverText = false;
-        }
         if (pos != null && shouldShowHoverText()) {
-            didShowHoverText = true;
-            DrawCalls.startTemporaryDrawing();
-
             String hoverText = getHoverText();
             float textSize = DrawCalls.textWidth(hoverText);
             DrawCalls.rectangle(pos.translate(9, -1), (int) textSize + 22, 32, new Color(255, 255, 255));
