@@ -5,9 +5,7 @@ import com.tiji.elements.core.Color;
 import com.tiji.elements.core.ElementFactory;
 import com.tiji.elements.core.Position;
 import com.tiji.elements.display.DrawCalls;
-import com.tiji.elements.display.ui.widget.Box;
-import com.tiji.elements.display.ui.widget.HoverText;
-import com.tiji.elements.display.ui.widget.Widget;
+import com.tiji.elements.display.ui.widget.*;
 
 import java.util.ArrayList;
 
@@ -18,6 +16,8 @@ public class BrushEditor implements AbstractUI {
     private static final ArrayList<BrushElement> cachedBrushes = new ArrayList<>();
 
     private final ArrayList<Widget> widgets = new ArrayList<>();
+
+    private final Slider brushSize;
 
     private record BrushElement(String name, Color[] color, ElementFactory elementFactory) {}
 
@@ -97,6 +97,11 @@ public class BrushEditor implements AbstractUI {
                 y += 36;
             }
         }
+        brushSize = new Slider(new Position((screenWidth - UI_WIDTH) / 2 + 10, (screenHeight + UI_HEIGHT) / 2 - 30),
+                300, 1, 15, Game.brushSize);
+        widgets.add(brushSize);
+        widgets.add(new Label(brushSize.getPos().translate(0, -20), Game.translationHandler.translate("ui.brush_size")));
+        widgets.add(new VaryingLabel(brushSize.getPos().translate(310, 0), () -> String.valueOf(brushSize.getValue())));
     }
 
     @Override
@@ -104,6 +109,8 @@ public class BrushEditor implements AbstractUI {
         DrawCalls.popTemporaryDrawing();
         DrawCalls.startTemporaryDrawing();
         widgets.forEach(widget -> widget.draw(new Position(mouseX, mouseY)));
+
+        Game.brushSize = brushSize.getValue();
     }
 
     @Override

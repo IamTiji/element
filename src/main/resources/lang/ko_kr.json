@@ -8,6 +8,8 @@
     "element.stone": "돌",
     "element.mud": "진흙",
     "element.fire": "불",
-    "element.wood": "나무"
+    "element.wood": "나무",
+
+    "ui.brush_size": "브러시 크기"
   }
 }

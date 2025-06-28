@@ -8,6 +8,8 @@
     "element.stone": "Stone",
     "element.mud": "Mud",
     "element.fire": "Fire",
-    "element.wood": "Wood"
+    "element.wood": "Wood",
+
+    "ui.brush_size": "Brush Size"
   }
 }

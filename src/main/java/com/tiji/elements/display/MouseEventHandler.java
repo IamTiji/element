@@ -7,15 +7,15 @@ import com.tiji.elements.utils.Line;
 public class MouseEventHandler {
     private Position previous;
     private final ScreenDrawer screenDrawer;
-    private static final int brushSize = 3;
 
     public MouseEventHandler(ScreenDrawer screenDrawer) {
         this.screenDrawer = screenDrawer;
     }
 
     private void drawElement(Position position) {
-        for (int i = 0; i <= brushSize; i++) {
-            for (int j = 0; j <= brushSize; j++) {
+        position = position.translate(-Game.brushSize / 2, -Game.brushSize / 2);
+        for (int i = 0; i <= Game.brushSize; i++) {
+            for (int j = 0; j <= Game.brushSize; j++) {
                 Position newPosition = new Position(position, i, j);
                 if (!Game.world.isOutOfBounds(newPosition)) {
                     Game.world.setElement(newPosition, Game.paintElement.call(newPosition));
