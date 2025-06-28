@@ -215,7 +215,7 @@ public class ScreenDrawer {
             GL43.glTexParameteri(GL43.GL_TEXTURE_2D, GL43.GL_TEXTURE_MAG_FILTER, GL43.GL_NEAREST);
         }
 
-        FontLoader.loadFont();
+        FontLoader.loadFont(width, height);
 
         DrawCalls.init(width, height);
     }
