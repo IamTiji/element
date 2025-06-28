@@ -22,7 +22,6 @@ public class FontLoader {
     private static final InputStream FONT_METADATA = FontLoader.class.getResourceAsStream("/font.json");
 
     private static final HashMap<Integer, CharData> charPos = new HashMap<>();
-    private static final float WIDTH_MULTIPLIER = 0.75f;
 
     public static int shaderProgram;
     public static int fontAtlasPointer;
@@ -31,7 +30,9 @@ public class FontLoader {
 
     public record CharData(float[] atlasBounds, float[] shifts, float[] size, float advance) {}
 
-    public static void loadFont() {
+    public static void loadFont(int w, int h) {
+        final float WIDTH_MULTIPLIER = (float) h / w;
+
         shaderProgram = ScreenDrawer.makeShaderProgram("/shader/font.vert", "/shader/font.frag");
 
         if (FONT_ATLAS == null || FONT_METADATA == null) throw new RuntimeException("Font resources not found");
