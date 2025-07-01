@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.tiji.elements.core.Color;
+import com.tiji.elements.core.Position;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL43;
 
@@ -17,8 +18,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.tiji.elements.core.QOIImageReader;
+import com.tiji.elements.core.Image;
+
 public class FontLoader {
-    private static final InputStream FONT_ATLAS = FontLoader.class.getResourceAsStream("/font.png");
+    private static final InputStream FONT_ATLAS = FontLoader.class.getResourceAsStream("/font.qoi");
     private static final InputStream FONT_METADATA = FontLoader.class.getResourceAsStream("/font.json");
 
     private static final HashMap<Integer, CharData> charPos = new HashMap<>();
@@ -37,14 +41,14 @@ public class FontLoader {
 
         if (FONT_ATLAS == null || FONT_METADATA == null) throw new RuntimeException("Font resources not found");
         try {
-            BufferedImage atlas = ImageIO.read(FONT_ATLAS);
+            Image atlas = QOIImageReader.read(FONT_ATLAS);
             ByteBuffer imageAtlas = BufferUtils.createByteBuffer(atlas.getWidth() * atlas.getHeight() * 3);
             for (int y = 0; y < atlas.getHeight(); y++) {
                 for (int x = 0; x < atlas.getWidth(); x++) {
-                    int rgb = atlas.getRGB(x, y);
-                    imageAtlas.put((byte) ((rgb >> 16) & 0xFF));
-                    imageAtlas.put((byte) ((rgb >> 8) & 0xFF));
-                    imageAtlas.put((byte) (rgb & 0xFF));
+                    Color color = atlas.getPixelAt(new Position(x, y));
+                    imageAtlas.put((byte) color.red());
+                    imageAtlas.put((byte) color.green());
+                    imageAtlas.put((byte) color.blue());
                 }
             }
             imageAtlas.flip();

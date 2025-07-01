@@ -31,7 +31,7 @@ public class Game {
     public static final int THREAD_COUNT = 8;
 
     public static void main(String[] args) {
-        translationHandler.loadTranslations(new Language("ko", "kr"));
+        translationHandler.loadTranslations(new Language("en", "us"));
         world = new World(WIDTH, HEIGHT, initElement);
         Window screen = new Window(world::init);
     }
