@@ -15,8 +15,6 @@ public class BrushEditor extends AbstractUI {
 
     private static final ArrayList<BrushElement> cachedBrushes = new ArrayList<>();
 
-    private final ArrayList<Widget> widgets = new ArrayList<>();
-
     private final Slider brushSize;
 
     private record BrushElement(String name, Color[] color, ElementFactory elementFactory) {}
@@ -72,7 +70,7 @@ public class BrushEditor extends AbstractUI {
     }
 
     public BrushEditor(int screenWidth, int screenHeight) {
-        widgets.add(new Box(new Position((screenWidth  - UI_WIDTH ) / 2, (screenHeight - UI_HEIGHT) / 2),
+        super.addWidget(new Box(new Position((screenWidth  - UI_WIDTH ) / 2, (screenHeight - UI_HEIGHT) / 2),
                 UI_WIDTH, UI_HEIGHT));
 
         if (cachedBrushes.isEmpty()) {
@@ -89,7 +87,7 @@ public class BrushEditor extends AbstractUI {
         int y = (screenHeight - UI_HEIGHT) / 2 + 24;
         int x = (screenWidth - UI_WIDTH) / 2 + 24;
         for (BrushElement brush : cachedBrushes) {
-            widgets.add(new ElementButton(new Position(x, y), brush, () -> Game.paintElement = brush.elementFactory));
+            super.addWidget(new ElementButton(new Position(x, y), brush, () -> Game.paintElement = brush.elementFactory));
 
             x += 36;
             if (x > ((screenWidth + UI_WIDTH) / 2)) {
@@ -99,9 +97,9 @@ public class BrushEditor extends AbstractUI {
         }
         brushSize = new Slider(new Position((screenWidth - UI_WIDTH) / 2 + 10, (screenHeight + UI_HEIGHT) / 2 - 30),
                 300, 1, 15, Game.brushSize);
-        widgets.add(brushSize);
-        widgets.add(new Label(brushSize.getPos().translate(0, -20), Game.translationHandler.translate("ui.brush_size")));
-        widgets.add(new VaryingLabel(brushSize.getPos().translate(310, 0), () -> String.valueOf(brushSize.getValue())));
+        super.addWidget(brushSize);
+        super.addWidget(new Label(brushSize.getPos().translate(0, -20), Game.translationHandler.translate("ui.brush_size")));
+        super.addWidget(new VaryingLabel(brushSize.getPos().translate(310, 0), () -> String.valueOf(brushSize.getValue())));
     }
 
     @Override
