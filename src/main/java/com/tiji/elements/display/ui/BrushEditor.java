@@ -9,7 +9,7 @@ import com.tiji.elements.display.ui.widget.*;
 
 import java.util.ArrayList;
 
-public class BrushEditor implements AbstractUI {
+public class BrushEditor extends AbstractUI {
     private static final int UI_WIDTH = 600;
     private static final int UI_HEIGHT = 400;
 
@@ -106,30 +106,7 @@ public class BrushEditor implements AbstractUI {
 
     @Override
     public void render(int mouseX, int mouseY, int screenWidth, int screenHeight) {
-        DrawCalls.popTemporaryDrawing();
-        DrawCalls.startTemporaryDrawing();
-        widgets.forEach(widget -> widget.draw(new Position(mouseX, mouseY)));
-
+        super.render(mouseX, mouseY, screenWidth, screenHeight);
         Game.brushSize = brushSize.getValue();
-    }
-
-    @Override
-    public void mouseClicked(int x, int y) {
-        widgets.forEach(widget -> widget.mouseClick(new Position(x, y)));
-    }
-
-    @Override
-    public void mouseReleased(int x, int y) {
-        widgets.forEach(widget -> widget.mouseRelease(new Position(x, y)));
-    }
-
-    @Override
-    public void keyPress(int k) {
-        widgets.forEach(widget -> widget.keyPressed(k));
-    }
-
-    @Override
-    public void close() {
-        widgets.forEach(Widget::remove);
     }
 }
