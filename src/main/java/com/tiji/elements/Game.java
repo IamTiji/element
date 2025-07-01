@@ -4,11 +4,13 @@ import com.tiji.elements.core.ElementFactory;
 import com.tiji.elements.core.World;
 import com.tiji.elements.display.Window;
 import com.tiji.elements.elements.*;
-import com.tiji.elements.settings.Language;
+import com.tiji.elements.settings.SettingHandler;
+import com.tiji.elements.settings.fields.Language;
 import com.tiji.elements.settings.TranslationHandler;
 
 public class Game {
     public static TranslationHandler translationHandler = new TranslationHandler();
+    public static SettingHandler settingHandler = new SettingHandler();
     public static World world;
     private static final ElementFactory initElement = Air::new;
     public static ElementFactory paintElement = Sand::new;
@@ -31,7 +33,9 @@ public class Game {
     public static final int THREAD_COUNT = 8;
 
     public static void main(String[] args) {
-        translationHandler.loadTranslations(new Language("en", "us"));
+        settingHandler.loadSettings();
+        Language language = (Language) settingHandler.getSetting("language");
+        translationHandler.loadTranslations(language);
         world = new World(WIDTH, HEIGHT, initElement);
         Window screen = new Window(world::init);
     }

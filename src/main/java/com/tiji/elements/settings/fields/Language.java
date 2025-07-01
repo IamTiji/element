@@ -1,4 +1,4 @@
-package com.tiji.elements.settings;
+package com.tiji.elements.settings.fields;
 
 public record Language(String languageCode, String countryCode) implements SettingFieldType {
     public String toString() {
@@ -15,7 +15,7 @@ public record Language(String languageCode, String countryCode) implements Setti
     }
 
     @Override
-    public Object getFromString(String value) {
+    public SettingFieldType getFromString(String value) {
         String[] item = value.split("-");
         return new Language(item[0], item[1]);
     }

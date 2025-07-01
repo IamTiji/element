@@ -2,10 +2,10 @@ package com.tiji.elements.settings;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.tiji.elements.settings.fields.Language;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class TranslationHandler {
