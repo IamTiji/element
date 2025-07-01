@@ -124,6 +124,11 @@ public class BrushEditor implements AbstractUI {
     }
 
     @Override
+    public void keyPress(int k) {
+        widgets.forEach(widget -> widget.keyPressed(k));
+    }
+
+    @Override
     public void close() {
         widgets.forEach(Widget::remove);
     }
