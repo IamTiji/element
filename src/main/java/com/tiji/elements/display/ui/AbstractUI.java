@@ -12,7 +12,7 @@ public abstract class AbstractUI {
     protected void addWidget(Widget widget) {
         widgets.add(widget);
     }
-    void close() {
+    public void close() {
         widgets.forEach(Widget::remove);
     }
     public void mouseClicked(int x, int y) {
