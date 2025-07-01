@@ -61,7 +61,7 @@ public class Window {
         drawer = new ScreenDrawer(width, height);
 
         MouseEventHandler mouse = new MouseEventHandler(drawer);
-        KeyboardEventHandler keyboard = new KeyboardEventHandler();
+        KeyboardEventHandler keyboard = new KeyboardEventHandler(drawer);
 
         GLFW.glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
             if (action == GLFW.GLFW_PRESS) {
