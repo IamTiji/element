@@ -22,7 +22,9 @@ public class KeyboardEventHandler {
         if (keyActions.containsKey(e)) {
             keyActions.get(e).run();
         } else {
-            drawer.activeUI.keyPress(e);
+            if (drawer.isUiOpen) {
+                drawer.activeUI.keyPress(e);
+            }
         }
     }
 }
