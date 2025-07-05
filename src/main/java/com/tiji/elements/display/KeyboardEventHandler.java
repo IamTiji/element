@@ -27,4 +27,10 @@ public class KeyboardEventHandler {
             }
         }
     }
+
+    public void charTyped(char e) {
+        if (drawer.isUiOpen) {
+            drawer.activeUI.charTyped(e);
+        }
+    }
 }

@@ -1,12 +1,16 @@
 package com.tiji.elements.display;
 
 import com.tiji.elements.Game;
+import com.tiji.elements.display.ui.AbstractUI;
 import com.tiji.elements.display.ui.BrushEditor;
+import com.tiji.elements.display.ui.SettingEditor;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL43;
 import org.lwjgl.opengl.GLDebugMessageCallback;
+
+import java.lang.reflect.InvocationTargetException;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
@@ -84,18 +88,11 @@ public class Window {
                 keyboard.keyPressed(key);
             }
         });
-        keyboard.registerKeyAction(GLFW.GLFW_KEY_F1, () -> {
-            synchronized (ScreenDrawer.uiConstructLock) {
-                if (drawer.isUiOpen) {
-                    drawer.isUiOpen = false;
-                    drawer.activeUI.close();
-                    drawer.activeUI = null;
-                } else {
-                    drawer.isUiOpen = true;
-                    drawer.activeUI = new BrushEditor(width, height);
-                }
-            }
+        GLFW.glfwSetCharCallback(window, (window, c) -> {
+            keyboard.charTyped((char) c);
         });
+        keyboard.registerKeyAction(GLFW.GLFW_KEY_F1, screenConstructor(BrushEditor.class, width, height));
+        keyboard.registerKeyAction(GLFW.GLFW_KEY_F2, screenConstructor(SettingEditor.class, width, height));
 
         loop();
     }
@@ -112,5 +109,25 @@ public class Window {
         drawer.close();
         GLFW.glfwDestroyWindow(window);
         System.exit(0);
+    }
+
+    private Runnable screenConstructor(Class<? extends AbstractUI> screen, int width, int height) {
+        return () -> {
+            synchronized (ScreenDrawer.uiConstructLock) {
+                if (drawer.isUiOpen) {
+                    drawer.isUiOpen = false;
+                    drawer.activeUI.close();
+                    drawer.activeUI = null;
+                } else {
+                    drawer.isUiOpen = true;
+                    try {
+                        drawer.activeUI = screen.getConstructor(int.class, int.class).newInstance(width, height);
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                             NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
     }
 }

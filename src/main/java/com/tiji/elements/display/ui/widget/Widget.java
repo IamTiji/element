@@ -35,4 +35,5 @@ public abstract class Widget {
     public void mouseClick(Position pos) {}
     public void mouseRelease(Position pos) {}
     public void keyPressed(int k) {}
+    public void charTyped(char c) {}
 }

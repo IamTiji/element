@@ -23,6 +23,10 @@ public abstract class AbstractUI {
         widgets.forEach(widget -> widget.mouseRelease(new Position(x, y)));
     }
 
+    public void charTyped(char c) {
+        widgets.forEach(widget -> widget.charTyped(c));
+    }
+
     public void keyPress(int k) {
         widgets.forEach(widget -> widget.keyPressed(k));
     }
