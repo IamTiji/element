@@ -13,6 +13,7 @@ public abstract class AbstractUI {
         widgets.add(widget);
     }
     public void close() {
+        DrawCalls.popTemporaryDrawing();
         widgets.forEach(Widget::remove);
     }
     public void mouseClicked(int x, int y) {
