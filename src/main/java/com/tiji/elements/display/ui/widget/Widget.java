@@ -36,4 +36,5 @@ public abstract class Widget {
     public void mouseRelease(Position pos) {}
     public void keyPressed(int k) {}
     public void charTyped(char c) {}
+    public void preeditChange(String preedit, int caret) {}
 }

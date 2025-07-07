@@ -32,6 +32,10 @@ public abstract class AbstractUI {
         widgets.forEach(widget -> widget.keyPressed(k));
     }
 
+    public void preeditChange(String preedit, int caret) {
+        widgets.forEach(widget -> widget.preeditChange(preedit, caret));
+    }
+
     public void render(int mouseX, int mouseY, int screenWidth, int screenHeight) {
         DrawCalls.popTemporaryDrawing();
         DrawCalls.startTemporaryDrawing();

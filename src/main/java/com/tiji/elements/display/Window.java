@@ -5,17 +5,21 @@ import com.tiji.elements.display.ui.AbstractUI;
 import com.tiji.elements.display.ui.BrushEditor;
 import com.tiji.elements.display.ui.SettingEditor;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWPreeditCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL43;
 import org.lwjgl.opengl.GLDebugMessageCallback;
+import org.lwjgl.system.MemoryUtil;
 
 import java.lang.reflect.InvocationTargetException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
 public class Window {
-    long window;
+    public long window;
     ScreenDrawer drawer;
     Runnable initAction;
 
@@ -91,13 +95,19 @@ public class Window {
         GLFW.glfwSetCharCallback(window, (window, c) -> {
             keyboard.charTyped((char) c);
         });
+
+        GLFW.glfwSetPreeditCallback(window,  (_, preedit_length, preedit_string, _, _, _, caret) -> {
+            if (drawer.isUiOpen) {
+                ByteBuffer byteBuffer = MemoryUtil.memByteBuffer(preedit_string, preedit_length*4); // UTF32
+                String fullPreeditString = StandardCharsets.UTF_32LE.decode(byteBuffer).toString();
+                drawer.activeUI.preeditChange(fullPreeditString, caret);
+            }
+        });
         keyboard.registerKeyAction(GLFW.GLFW_KEY_F1, screenConstructor(BrushEditor.class, width, height));
         keyboard.registerKeyAction(GLFW.GLFW_KEY_F2, screenConstructor(SettingEditor.class, width, height));
-
-        loop();
     }
 
-    private void loop() {
+    public void loop() {
         while (!GLFW.glfwWindowShouldClose(window)) {
             drawer.draw(window, (int) currentX, (int) currentY);
             GLFW.glfwPollEvents();

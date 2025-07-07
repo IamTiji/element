@@ -12,6 +12,7 @@ public class Game {
     public static TranslationHandler translationHandler = new TranslationHandler();
     public static SettingHandler settingHandler = new SettingHandler();
     public static World world;
+    public static Window window;
     private static final ElementFactory initElement = Air::new;
     public static ElementFactory paintElement = Sand::new;
     public static int brushSize = 4;
@@ -37,6 +38,7 @@ public class Game {
         Language language = (Language) settingHandler.getSetting("language");
         translationHandler.loadTranslations(language);
         world = new World(WIDTH, HEIGHT, initElement);
-        Window screen = new Window(world::init);
+        window = new Window(world::init);
+        window.loop();
     }
 }

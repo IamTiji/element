@@ -1,18 +1,21 @@
 package com.tiji.elements.display.ui.widget;
 
+import com.tiji.elements.Game;
 import com.tiji.elements.core.Color;
 import com.tiji.elements.core.Position;
 import com.tiji.elements.display.DrawCalls;
 import org.lwjgl.glfw.GLFW;
 
 public class Entry extends Widget {
-    private static final int HEIGHT = 20;
+    private static final int HEIGHT = 30;
     private static final int BLINK_INTERVAL = 1000;
 
     int width;
     Box base;
     String text;
     int cursorPosition = 0;
+    String preedit = "";
+    int preeditCursorPos = 0;
 
     public Entry(Position pos, int width, String text) {
         super(pos);
@@ -29,10 +32,26 @@ public class Entry extends Widget {
     @Override
     public void draw(Position mousePos) {
         long currentTime = System.currentTimeMillis();
+        String displayedText = insertTextToCursor(preedit);
         if (currentTime % BLINK_INTERVAL < BLINK_INTERVAL / 2) {
-            DrawCalls.rectangle(pos.translate((int) DrawCalls.textWidth(text.substring(0, cursorPosition)), 0), 2, HEIGHT, new Color(255, 255, 255));
+            DrawCalls.rectangle(pos.translate((int) getCursorOffset(), 5),
+                    2, HEIGHT-10, new Color(255, 255, 255));
         }
-        DrawCalls.text(pos.translate(0, 2), text, new Color(255, 255, 255));
+        DrawCalls.text(pos.translate(0, 5), displayedText, new Color(255, 255, 255));
+    }
+
+    private float getCursorOffset() {
+        return DrawCalls.textWidth(insertTextToCursor(preedit).substring(0, cursorPosition + preeditCursorPos));
+    }
+
+    private String insertTextToCursor(String toInsert) {
+        String left  = text.substring(0, cursorPosition);
+        String right = text.substring(cursorPosition);
+        return left + toInsert + right;
+    }
+
+    private void updateCursorPosition() {
+        GLFW.glfwSetPreeditCursorRectangle(Game.window.window, pos.translate((int) getCursorOffset(), 0).x(), pos.y(), 2, HEIGHT);
     }
 
     @Override
@@ -42,10 +61,9 @@ public class Entry extends Widget {
 
     @Override
     public void charTyped(char c) {
-        String left = text.substring(0, cursorPosition);
-        String right = text.substring(cursorPosition);
-        text = left + c + right;
+        text = insertTextToCursor(String.valueOf(c));
         cursorPosition++;
+        updateCursorPosition();
     }
 
     @Override
@@ -58,5 +76,11 @@ public class Entry extends Widget {
         } else if (k == GLFW.GLFW_KEY_RIGHT && cursorPosition < text.length()) {
             cursorPosition++;
         }
+    }
+
+    @Override
+    public void preeditChange(String preedit, int caret) {
+        this.preedit = preedit;
+        this.preeditCursorPos = caret;
     }
 }
