@@ -82,5 +82,6 @@ public class Entry extends Widget {
     public void preeditChange(String preedit, int caret) {
         this.preedit = preedit;
         this.preeditCursorPos = caret;
+        updateCursorPosition();
     }
 }
