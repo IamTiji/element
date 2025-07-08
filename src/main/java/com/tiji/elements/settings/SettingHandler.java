@@ -50,12 +50,9 @@ public class SettingHandler {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error reading settings file: " + e.getMessage());
+            resetSettings();
+            saveSettings();
         }
-        //catch (JsonSyntaxException e) {
-        //    resetSettings();
-        //    saveSettings();
-        //}
     }
 
     public void resetSettings() {
