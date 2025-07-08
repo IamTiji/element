@@ -117,7 +117,7 @@ public class FontLoader {
         for (char charactor : charArray) {
             CharData charData = charPos.get((int) charactor);
             if (charData == null) {
-                charData = charPos.get(0x20);
+                charData = charPos.get(0x3f); // ?
             }
             float red = color.red() / 255f;
             float green = color.green() / 255f;
@@ -146,7 +146,7 @@ public class FontLoader {
         for (char charactor : text.toCharArray()) {
             CharData charData = charPos.get((int) charactor);
             if (charData == null) {
-                charData = charPos.get(0x20);
+                charData = charPos.get(0x3f); // ?
             }
             width += charData.advance * size;
         }
