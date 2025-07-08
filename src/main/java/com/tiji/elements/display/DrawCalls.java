@@ -93,6 +93,9 @@ public class DrawCalls {
             updateTextVertices();
         }
 
+        GL43.glEnable(GL43.GL_DEPTH_TEST);
+        GL43.glDepthFunc(GL43.GL_GREATER);
+
         GL43.glUseProgram(shaderProgram);
         GL43.glBindVertexArray(vao_normal);
         GL43.glDrawArrays(GL43.GL_TRIANGLES, 0, normalVertices);
@@ -106,6 +109,8 @@ public class DrawCalls {
         GL43.glBindTexture(GL43.GL_TEXTURE_2D, FontLoader.fontAtlasPointer);
         GL43.glDrawArrays(GL43.GL_TRIANGLES, 0, textVertices);
         GL43.glDisable(GL43.GL_BLEND);
+
+        GL43.glDisable(GL43.GL_DEPTH_TEST);
     }
 
     private static float[] getPos(Position pos) {
@@ -166,12 +171,12 @@ public class DrawCalls {
         float green = color.green() / 255f;
         float blue = color.blue() / 255f;
         float[] vertices = {
-                packedVertices[0][0], packedVertices[0][1], (float) id, red, green, blue,
-                packedVertices[1][0], packedVertices[1][1], (float) id, red, green, blue,
-                packedVertices[2][0], packedVertices[2][1], (float) id, red, green, blue,
-                packedVertices[0][0], packedVertices[0][1], (float) id, red, green, blue,
-                packedVertices[2][0], packedVertices[2][1], (float) id, red, green, blue,
-                packedVertices[3][0], packedVertices[3][1], (float) id, red, green, blue,
+                packedVertices[0][0], packedVertices[0][1], -(float) id, red, green, blue,
+                packedVertices[1][0], packedVertices[1][1], -(float) id, red, green, blue,
+                packedVertices[2][0], packedVertices[2][1], -(float) id, red, green, blue,
+                packedVertices[0][0], packedVertices[0][1], -(float) id, red, green, blue,
+                packedVertices[2][0], packedVertices[2][1], -(float) id, red, green, blue,
+                packedVertices[3][0], packedVertices[3][1], -(float) id, red, green, blue,
         };
         verticesStorage.put(id, vertices);
         if (isDrawingTemporary) temporaryVertices.add(id);
@@ -185,7 +190,7 @@ public class DrawCalls {
         int id = ++lastId;
 
         float[] normalizedPosition = getPos(pos);
-        ArrayList<Float> vertices = FontLoader.genTextVertices(text, normalizedPosition[0], normalizedPosition[1], color, FONT_SIZE, (float) id);
+        ArrayList<Float> vertices = FontLoader.genTextVertices(text, normalizedPosition[0], normalizedPosition[1], color, FONT_SIZE, -(float) id);
         float[] verticesArray = new float[vertices.size()];
         for (int i = 0; i < vertices.size(); i++) {
             verticesArray[i] = vertices.get(i);

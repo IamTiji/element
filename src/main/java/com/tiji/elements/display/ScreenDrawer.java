@@ -49,7 +49,7 @@ public class ScreenDrawer {
     public static final float[] projectionMatrix = {
             1, 0, 0, 0,
             0, 1, 0, 0,
-            0, 0, 1e-4f, 0,
+            0, 0, -1e-4f, 0,
             0, 0, 0, 1
     };
     public static final FloatBuffer projectionMatrixBuffer = BufferUtils.createFloatBuffer(16);
@@ -113,8 +113,6 @@ public class ScreenDrawer {
     public ScreenDrawer(int width, int height) {
         windowWidth = width;
         windowHeight = height;
-
-        GL43.glColorMask(true, true, true, true);
 
         shaderProgram = makeShaderProgram("/shader/element.vert", "/shader/element.frag");
         glowShaderProgram = makeShaderProgram("/shader/glow.vert", "/shader/glow.frag");
@@ -221,7 +219,9 @@ public class ScreenDrawer {
     }
 
     public void draw(long window, int mouseX, int mouseY) {
-        GL43.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GL43.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        GL43.glClearDepth(0f);
+        GL43.glClear(GL43.GL_COLOR_BUFFER_BIT | GL43.GL_DEPTH_BUFFER_BIT);
 
         GL43.glUseProgram(shaderProgram);
 

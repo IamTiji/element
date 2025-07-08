@@ -16,8 +16,8 @@ public class Button extends Widget {
     public Button(String text, Position pos, int width) {
         super(pos);
 
-        textId = DrawCalls.text(getPos().translate((int) DrawCalls.textCenter(text, width), VERT_PADDING), text, TEXT_COLOR);
         container = new Box(pos, width, BUTTON_HEIGHT);
+        textId = DrawCalls.text(getPos().translate((int) DrawCalls.textCenter(text, width), VERT_PADDING), text, TEXT_COLOR);
     }
 
     public Button(String text, Position pos) {
