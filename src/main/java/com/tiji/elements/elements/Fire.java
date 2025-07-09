@@ -3,10 +3,11 @@ package com.tiji.elements.elements;
 import com.tiji.elements.core.Color;
 import com.tiji.elements.core.Element;
 import com.tiji.elements.core.Position;
+import com.tiji.elements.elements.containers.AcidNonReactable;
 import com.tiji.elements.elements.containers.Flammable;
 import com.tiji.elements.elements.containers.Gas;
 
-public class Fire extends Gas {
+public class Fire extends Gas implements AcidNonReactable {
     private int lifeTime;
     private static final int MAX_LIFE_TIME = 30;
 

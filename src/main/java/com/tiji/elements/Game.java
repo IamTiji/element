@@ -24,7 +24,10 @@ public class Game {
             Mud::new,
             Fire::new,
             Wood::new,
-            Oil::new
+            Oil::new,
+            Slime::new,
+            Acid::new,
+            Virus::new,
     };
     public static int DrawScale;
     public static final boolean isDevelopment = false;

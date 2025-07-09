@@ -4,8 +4,9 @@ import com.tiji.elements.core.Color;
 import com.tiji.elements.core.Element;
 import com.tiji.elements.core.Position;
 import com.tiji.elements.core.Untickable;
+import com.tiji.elements.elements.containers.AcidNonReactable;
 
-public class Air extends Element implements Untickable {
+public class Air extends Element implements Untickable, AcidNonReactable {
     public Air(Position position) {
         super(position, Integer.MIN_VALUE);
     }

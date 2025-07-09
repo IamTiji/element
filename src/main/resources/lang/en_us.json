@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "translations": {
     "ui.title": "Elements",
+
     "element.air": "Air",
     "element.water": "Water",
     "element.sand": "Sand",
@@ -9,6 +10,17 @@
     "element.mud": "Mud",
     "element.fire": "Fire",
     "element.wood": "Wood",
+    "element.oil": "Oil",
+    "element.acid": "Acid",
+    "element.slime": "Slime",
+    "element.virus": "Virus",
+
+    "ui.brush_size": "Brush Size",
+
+    "setting.key.brushKeybind": "Brush Editor Keybind",
+    "setting.key.language": "Language",
+
+    "setting.restore_default": "Restore Default",
 
     "ui.brush_size": "Brush Size"
   }

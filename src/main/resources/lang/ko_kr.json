@@ -9,6 +9,17 @@
     "element.mud": "진흙",
     "element.fire": "불",
     "element.wood": "나무",
+    "element.oil": "기름",
+    "element.acid": "산",
+    "element.slime": "슬라임",
+    "element.virus": "바이러스",
+
+    "ui.brush_size": "브러시 크기",
+
+    "setting.key.brushKeybind": "브러시 에딧 키",
+    "setting.key.language": "언어",
+
+    "setting.restore_default": "기본값 복원",
 
     "ui.brush_size": "브러시 크기"
   }
