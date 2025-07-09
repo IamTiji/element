@@ -186,6 +186,28 @@ public class DrawCalls {
         return id;
     }
 
+    public static int triangle(Position pos1, Position pos2, Position pos3, Color color) {
+        int id = ++lastId;
+        float[][] packedVertices = {
+                getPos(pos1),
+                getPos(pos2),
+                getPos(pos3),
+        };
+        float red = color.red() / 255f;
+        float green = color.green() / 255f;
+        float blue = color.blue() / 255f;
+        float[] vertices = {
+                packedVertices[0][0], packedVertices[0][1], -(float) id, red, green, blue,
+                packedVertices[1][0], packedVertices[1][1], -(float) id, red, green, blue,
+                packedVertices[2][0], packedVertices[2][1], -(float) id, red, green, blue,
+        };
+        verticesStorage.put(id, vertices);
+        if (isDrawingTemporary) temporaryVertices.add(id);
+
+        updateVertices = true;
+        return id;
+    }
+
     public static int text(Position pos, String text, Color color) {
         int id = ++lastId;
 
