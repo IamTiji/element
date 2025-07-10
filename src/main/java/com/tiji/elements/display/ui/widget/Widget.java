@@ -4,6 +4,9 @@ import com.tiji.elements.core.Position;
 
 public abstract class Widget {
     protected Position pos;
+    protected boolean focused;
+    private Runnable focusRequestCallback;
+    private Runnable focusDropCallback;
 
     public Widget(Position pos) {
         this.pos = pos;
@@ -28,6 +31,18 @@ public abstract class Widget {
     public final boolean isPointInside(Position pos, int width, int height) {
         return pos.x() >= this.pos.x() && pos.x() < this.pos.x() + width &&
                pos.y() >= this.pos.y() && pos.y() < this.pos.y() + height;
+    }
+
+    public final void focusStateChangeCallback(boolean focused, Runnable focusRequestCallback, Runnable focusDropCallback) {
+        this.focused = focused;
+        if (focusRequestCallback != null) this.focusRequestCallback = focusRequestCallback;
+        if (focusDropCallback != null) this.focusDropCallback = focusDropCallback;
+    }
+    protected final void requestFocus() {
+        focusRequestCallback.run();
+    }
+    protected final void dropFocus() {
+        focusDropCallback.run();
     }
 
     public abstract void draw(Position mousePos);

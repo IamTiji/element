@@ -33,7 +33,7 @@ public class Entry extends Widget {
     public void draw(Position mousePos) {
         long currentTime = System.currentTimeMillis();
         String displayedText = insertTextToCursor(preedit);
-        if (currentTime % BLINK_INTERVAL < BLINK_INTERVAL / 2) {
+        if (currentTime % BLINK_INTERVAL < BLINK_INTERVAL / 2 && focused) {
             DrawCalls.rectangle(pos.translate((int) getCursorOffset(), 5),
                     2, HEIGHT-10, new Color(255, 255, 255));
         }
@@ -61,27 +61,40 @@ public class Entry extends Widget {
 
     @Override
     public void charTyped(char c) {
-        text = insertTextToCursor(String.valueOf(c));
-        cursorPosition++;
-        updateCursorPosition();
+        if (focused) {
+            text = insertTextToCursor(String.valueOf(c));
+            cursorPosition++;
+            updateCursorPosition();
+        }
     }
 
     @Override
     public void keyPressed(int k) {
-        if (k == GLFW.GLFW_KEY_BACKSPACE && !text.isEmpty() && cursorPosition > 0) {
-            text = text.substring(0, cursorPosition-1) + text.substring(cursorPosition);
-            cursorPosition--;
-        } else if (k == GLFW.GLFW_KEY_LEFT && cursorPosition > 0) {
-            cursorPosition--;
-        } else if (k == GLFW.GLFW_KEY_RIGHT && cursorPosition < text.length()) {
-            cursorPosition++;
+        if (focused) {
+            if (k == GLFW.GLFW_KEY_BACKSPACE && !text.isEmpty() && cursorPosition > 0) {
+                text = text.substring(0, cursorPosition - 1) + text.substring(cursorPosition);
+                cursorPosition--;
+            } else if (k == GLFW.GLFW_KEY_LEFT && cursorPosition > 0) {
+                cursorPosition--;
+            } else if (k == GLFW.GLFW_KEY_RIGHT && cursorPosition < text.length()) {
+                cursorPosition++;
+            }
         }
     }
 
     @Override
     public void preeditChange(String preedit, int caret) {
-        this.preedit = preedit;
-        this.preeditCursorPos = caret;
-        updateCursorPosition();
+        if (focused) {
+            this.preedit = preedit;
+            this.preeditCursorPos = caret;
+            updateCursorPosition();
+        }
+    }
+
+    @Override
+    public void mouseClick(Position pos) {
+        if (isPointInside(pos, width, HEIGHT)) {
+            requestFocus();
+        }
     }
 }

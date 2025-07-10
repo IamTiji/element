@@ -8,9 +8,11 @@ import java.util.ArrayList;
 
 public abstract class AbstractUI {
     private final ArrayList<Widget> widgets = new ArrayList<>();
+    private Widget focusedWidget;
 
     protected void addWidget(Widget widget) {
         widgets.add(widget);
+        widget.focusStateChangeCallback(false, () -> requestFocus(widget), () -> dropFocus(widget));
     }
     public void close() {
         DrawCalls.popTemporaryDrawing();
@@ -34,6 +36,19 @@ public abstract class AbstractUI {
 
     public void preeditChange(String preedit, int caret) {
         widgets.forEach(widget -> widget.preeditChange(preedit, caret));
+    }
+
+    public void requestFocus(Widget widget) {
+        if (focusedWidget != null) {
+            focusedWidget.focusStateChangeCallback(false, null, null);
+        }
+        focusedWidget = widget;
+        focusedWidget.focusStateChangeCallback(true, null, null);
+    }
+
+    public void dropFocus(Widget widget) {
+        focusedWidget.focusStateChangeCallback(false, null, null);
+        focusedWidget = null;
     }
 
     public void render(int mouseX, int mouseY, int screenWidth, int screenHeight) {
