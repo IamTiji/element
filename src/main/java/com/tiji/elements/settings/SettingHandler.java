@@ -2,21 +2,18 @@ package com.tiji.elements.settings;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import com.tiji.elements.settings.fields.Language;
 import com.tiji.elements.settings.fields.SettingFieldType;
-import com.tiji.elements.settings.fields.SettingInt;
+import com.tiji.elements.settings.fields.SettingKeybind;
+import org.lwjgl.glfw.GLFW;
 
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SettingHandler {
     public record SettingsField(String key, SettingFieldType defaultValue) {
@@ -24,7 +21,7 @@ public class SettingHandler {
 
     List<SettingsField> settingsFields = Arrays.asList(
             new SettingsField("language", new Language("en", "us")),
-            new SettingsField("brushKeybind", new SettingInt(KeyEvent.VK_F1))
+            new SettingsField("brushKeybind", new SettingKeybind(GLFW.GLFW_KEY_F1))
     );
 
     private final HashMap<String, SettingFieldType> settings = new HashMap<>();
@@ -76,6 +73,10 @@ public class SettingHandler {
 
     public SettingFieldType getSetting(String key) {
         return settings.get(key);
+    }
+
+    public Map<String, SettingFieldType> getSettings() {
+        return settings;
     }
 
     public void setSetting(String key, SettingFieldType value) {
