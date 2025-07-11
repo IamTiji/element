@@ -2,6 +2,7 @@ package com.tiji.elements.settings;
 
 import com.google.gson.*;
 import com.tiji.elements.settings.fields.Language;
+import com.tiji.elements.utils.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +16,8 @@ public class TranslationHandler {
 
     private static final Language DUMMY_LANG = new Language("","");
     public void loadTranslations(Language language) {
+        Logger.info("Loading translations for language: " + language.getAsId() + "...");
+
         try (InputStream translationFile = getClass().getResourceAsStream("/lang/" + language.getAsId() + ".json")) {
             if (translationFile == null)
                 throw new NullPointerException("Translation file not found for key: " + language.getAsId());
@@ -41,6 +44,7 @@ public class TranslationHandler {
     }
     public static Language[] loadSupportedLanguage() {
         if (supportedLanguages.isEmpty()) {
+            Logger.debug("Supported language cache is empty!");
             try (InputStream list = TranslationHandler.class.getResourceAsStream("/lang/translations.json")) {
                 if (list == null)
                     throw new NullPointerException("Translation list file not found");

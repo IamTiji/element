@@ -1,6 +1,8 @@
 package com.tiji.elements.core;
 
 import com.tiji.elements.Game;
+import com.tiji.elements.settings.fields.Language;
+import com.tiji.elements.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +25,8 @@ public class World {
     private final int chunkY;
 
     public World(int width, int height, ElementFactory initialElement) {
+        Logger.info("Creating new world with dimensions: " + width + "x" + height);
+
         this.width = width;
         this.height = height;
         this.world = new Element[width][height];
@@ -52,6 +56,7 @@ public class World {
     }
 
     public void init() {
+        Logger.info("Starting %s simulation worker thread(s)...", Game.THREAD_COUNT);
         scheduleTasks();
         for (int i = 0; i < Game.THREAD_COUNT; i++) {
             new Thread(this::threadWorker, "Simulation-worker-"+i).start();
@@ -142,7 +147,7 @@ public class World {
     private void reschedule() throws InterruptedException {
         changes.swapBuffer();
         long tickCalcTime = System.currentTimeMillis() - lastTickStartTime;
-        if (Game.TARGET_MSPT*2 < tickCalcTime) System.err.printf("Tick took too long! %d ms, target: %d ms%n", tickCalcTime, Game.TARGET_MSPT);
+        if (Game.TARGET_MSPT*2 < tickCalcTime) Logger.warning("Tick took too long! %d ms, target: %d ms", tickCalcTime, Game.TARGET_MSPT);
         Thread.sleep(Math.max(0, Game.TARGET_MSPT - tickCalcTime));
         tickCount++;
 

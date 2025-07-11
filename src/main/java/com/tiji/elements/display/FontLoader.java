@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.tiji.elements.core.Color;
 import com.tiji.elements.core.Position;
+import com.tiji.elements.utils.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL43;
 
@@ -36,6 +37,8 @@ public class FontLoader {
 
     public static void loadFont(int w, int h) {
         final float WIDTH_MULTIPLIER = (float) h / w;
+
+        Logger.info("Loading font...");
 
         shaderProgram = ScreenDrawer.makeShaderProgram("/shader/font.vert", "/shader/font.frag");
 

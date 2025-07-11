@@ -4,6 +4,7 @@ import com.tiji.elements.Game;
 import com.tiji.elements.display.ui.AbstractUI;
 import com.tiji.elements.display.ui.BrushEditor;
 import com.tiji.elements.display.ui.SettingEditor;
+import com.tiji.elements.utils.Logger;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWPreeditCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -59,7 +60,7 @@ public class Window {
         GL43.glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
         GL43.glDebugMessageCallback((source, type, id, severity, length, message, _) -> {
             String readableMessage = GLDebugMessageCallback.getMessage(length, message);
-            System.err.printf("%s (type: %s, severity: %s, source: %s) ID: %s\n", readableMessage, type, severity, source, id);
+            Logger.error("%s (type: %s, severity: %s, source: %s) ID: %s\n", readableMessage, type, severity, source, id);
         }, 0);
 
         Game.DrawScale = width / Game.WIDTH;

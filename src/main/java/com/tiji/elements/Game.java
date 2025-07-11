@@ -7,6 +7,7 @@ import com.tiji.elements.elements.*;
 import com.tiji.elements.settings.SettingHandler;
 import com.tiji.elements.settings.fields.Language;
 import com.tiji.elements.settings.TranslationHandler;
+import com.tiji.elements.utils.Logger;
 
 public class Game {
     public static TranslationHandler translationHandler = new TranslationHandler();
@@ -40,13 +41,21 @@ public class Game {
     public static void main(String[] args) {
         if (Integer.parseInt(System.getProperties().get("java.version").toString().split("\\.")[0]) < MINIMUM_JAVA_VERSION) {
             throw new RuntimeException("Java version must be at least " + MINIMUM_JAVA_VERSION + ". Current version: " + System.getProperties().get("java.version"));
-        };
+        }
 
-        settingHandler.loadSettings();
-        Language language = (Language) settingHandler.getSetting("language");
-        translationHandler.loadTranslations(language);
-        world = new World(WIDTH, HEIGHT, initElement);
-        window = new Window(world::init);
-        window.loop();
+        try {
+            Logger.init();
+            settingHandler.loadSettings();
+            Language language = (Language) settingHandler.getSetting("language");
+            translationHandler.loadTranslations(language);
+            world = new World(WIDTH, HEIGHT, initElement);
+            window = new Window(world::init);
+            window.loop();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Logger.close();
+            System.exit(1);
+        }
+        Logger.close();
     }
 }
